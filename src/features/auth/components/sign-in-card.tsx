@@ -17,6 +17,8 @@ import Link from "next/link"
 
 import { FcGoogle } from "react-icons/fc";   
 import { FaGithub } from "react-icons/fa";   
+import { loginSchema } from "../schema"
+import { useLogin } from "../api/use-login"
 
 const IconFcGoogle = FcGoogle as React.FC<React.SVGProps<SVGSVGElement>>
 const IconFaGithub = FaGithub as React.FC<React.SVGProps<SVGSVGElement>>
@@ -24,26 +26,28 @@ const IconFaGithub = FaGithub as React.FC<React.SVGProps<SVGSVGElement>>
 
 
 
-const formSchema = z.object({
-    email: z.string().trim().min(1, "이메일을 입력해주세요").regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "유효한 이메일 형식이 아닙니다"),
-    password: z.string().min(8, "비밀번호는 최소 8자리 이상적어주세요")
-})
+// const formSchema = z.object({
+//     email: z.string().trim().min(1, "이메일을 입력해주세요").regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "유효한 이메일 형식이 아닙니다"),
+//     password: z.string().min(8, "비밀번호는 최소 8자리 이상적어주세요")
+// })
 
 
 
 export const SignInCard =()=>{
 
+    const {mutate} = useLogin()
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
         defaultValues:{
             email:"",
             password:""
         }
     })
 
-    const onSubmit = (values: z.infer<typeof formSchema>)=>{
-        console.log(values);        
+    const onSubmit = (values: z.infer<typeof loginSchema>)=>{
+        mutate({json: values})   
     }
 
 
